@@ -6,7 +6,7 @@
 
 /* 
  * File:   main.c
- * Author: jayengracio
+ * Author: jay engracio, jurdy rave hermita
  *
  * Created on 06 March 2019, 12:11
  */
