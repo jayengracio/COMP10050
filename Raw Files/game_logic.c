@@ -78,8 +78,6 @@ void printLine(){
  */
 void place_tokens(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPlayers){
     // the min number of tokens placed on a square in the first column of the board
-    struct token *top = NULL;
-    struct token *curr = NULL;
     
     int minNumOfTokens = 0;
     int selectedSquare = 0;
@@ -92,60 +90,21 @@ void place_tokens(square board[NUM_ROWS][NUM_COLUMNS], player players[], int num
             scanf("%d", &selectedSquare);
             
             // IMPLEMENT: if the square selected by the user has the minimum number of tokens
-            // and whether it does not contain a token of the same color selected by the player
+            // and whether it does not contain a token of the same color selected by the player 
+            board[selectedSquare][0].curr = board[selectedSquare][0].stack;
             
-            struct token *push(int value, struct token *top)
-            {
             board[selectedSquare][0].stack = (token*)malloc(sizeof(token));
             board[selectedSquare][0].stack->col = players[j].col;
-            board[selectedSquare][0].stack->nextPtr = curr;
+            board[selectedSquare][0].stack->next = board[selectedSquare][0].curr;
             board[selectedSquare][0].numTokens++;
             
-            return top;
-            }
-            
-            /*struct token *push(int value, struct token *top)
-            {
-                struct token *curr = top;
-                top = malloc(sizeof(token));
-                top = board[selectedSquare][0].stack;
-                top->col = players[j].col;
-                top->nextPtr = curr;
-                return top;
-            }*/
-            
-            /*struct token * pop(struct token *top){
-                struct token *curr = top;
-                if(curr!=NULL){
-                    top = curr->nextPtr;
-                    printf("Stack Data POP: %d\n", top->col);
-                    free(curr);
-                }
-                    return top;
-            
-            }*/
-            
-            top = push(2, top);
-            printf("Stack Data PUSH: %d\n", top->col);
-            
-            top = push(3, top);
-            printf("Stack Data PUSH: %d\n", top->col);
-            
-            top = push(4, top);
-            printf("Stack Data PUSH: %d\n", top->col);
-            
-            //top = pop(top);
-            //top = pop(top);
-            //board[selectedSquare][0].stack = (token*)malloc(sizeof(token));
-            //board[selectedSquare][0].stack->col = players[j].col;
-            //board[selectedSquare][0].numTokens++;
+            //printf(" %d --> ", board[5][0].curr->col);
                 
             //updates the minimum number of tokens
             if(((numPlayers*i)+j+1)%NUM_ROWS==0)
             minNumOfTokens++;
         }
     }
-
 }
 
 
@@ -159,9 +118,6 @@ void place_tokens(square board[NUM_ROWS][NUM_COLUMNS], player players[], int num
 
 void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPlayers){
     //TO BE IMPLEMENTED
-    struct token *top;
-    struct token *curr;
-    
     
     srand(time(NULL));
     int dice;
@@ -189,15 +145,12 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
             case 1:
                 printf("\nWhich piece? e.g (8,5)\n? ");
                 scanf("%d,%d", &row, &col);
+                
                 while (board[row][col].stack->col != players[j].col)
                 {
                     printf("\nYou do not have a piece in (%d,%d).\n? ", row,col);
                     scanf("%d,%d", &row, &col);
                 }
-                
-                
-                //board[row][col].stack = (token*)malloc(sizeof(token));
-                //board[row][col].numTokens--;
                 
                 printf("\n1. Above or 2. Below?\n?");
                 scanf("%d", &move);
@@ -205,33 +158,33 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                 if (col < NUM_COLUMNS || col > 0)
                 {
                     if(move == 1)
-                    {
-                        struct token * pop(struct token *top){
-                            struct token *curr = top;
-                            if(curr!=NULL){
-                                top = curr->nextPtr;
-                                printf("Stack Data POP: %d\n", top->col);
-                                free(curr);
-                            }
-                            return top;
-                          }
-                        
+                    {  
+                        board[row-1][col].curr = board[row][col].stack;
                         board[row-1][col].stack = (token*)malloc(sizeof(token));
                         board[row-1][col].stack->col = players[j].col;
-                        board[row-1][col].stack->nextPtr = curr;
+                        board[row-1][col].stack->next = board[row][col].curr;
                         board[row-1][col].numTokens++;
                         
-                        
-                        board[row][col].stack = (token*)malloc(sizeof(token));
-                        board[row][col].stack->col = curr->col;
-                        board[row][col].numTokens--;
+                        if(board[row][col].numTokens != 0)
+                        {
+                            board[row][col].stack = board[row][col].stack->next;
+                            board[row][col].numTokens--;
+                        }
                     }
                     
                     if (move == 2)
                     {
+                        board[row+1][col].curr = board[row][col].stack;
                         board[row+1][col].stack = (token*)malloc(sizeof(token));
                         board[row+1][col].stack->col = players[j].col;
+                        board[row+1][col].stack->next = board[row][col].curr;
                         board[row+1][col].numTokens++;
+                        
+                        if (board[row][col].numTokens != 0)
+                        {
+                            board[row][col].stack = board[row][col].stack->next;
+                            board[row][col].numTokens--;
+                        }
                     }
                 }
                 

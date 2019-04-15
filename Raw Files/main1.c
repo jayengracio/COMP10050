@@ -13,12 +13,16 @@
 
 #include "game_init.h"
 #include "game_logic.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 
 /*
  * 
  */
 int main(int argc, char** argv) {
+    //struct token *curr = NULL;
+    //struct token *top = NULL;
     
     //the board is defined as a 2-Dimensional array of squares
     square board[NUM_ROWS][NUM_COLUMNS];
