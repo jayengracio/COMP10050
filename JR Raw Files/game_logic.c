@@ -103,6 +103,7 @@ void place_tokens(square board[NUM_ROWS][NUM_COLUMNS], player players[], int num
             //updates the minimum number of tokens
             if(((numPlayers*i)+j+1)%NUM_ROWS==0)
             minNumOfTokens++;
+            print_board(board);
         }
     }
 }
