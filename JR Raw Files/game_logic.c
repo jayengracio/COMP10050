@@ -81,18 +81,30 @@ void place_tokens(square board[NUM_ROWS][NUM_COLUMNS], player players[], int num
     
     int minNumOfTokens = 0;
     int selectedSquare = 0;
+      board[0][0].numTokens=0;
+      board[1][0].numTokens=0;
+      board[2][0].numTokens=0;
+      board[3][0].numTokens=0;
+      board[4][0].numTokens=0;
+      board[5][0].numTokens=0;
     
     for(int i=0;i<4;i++)
     {
+      
         for (int j=0;j<numPlayers;j++)
         {
+            
             printf("\nPlayer %d please select a square\n", j+1);
             scanf("%d", &selectedSquare);
+           
+            if(board[selectedSquare][0].numTokens == minNumOfTokens)
+           {
+                
             
             // IMPLEMENT: if the square selected by the user has the minimum number of tokens
             // and whether it does not contain a token of the same color selected by the player 
             board[selectedSquare][0].curr = board[selectedSquare][0].stack;
-            
+          
             board[selectedSquare][0].stack = (token*)malloc(sizeof(token));
             board[selectedSquare][0].stack->col = players[j].col;
             board[selectedSquare][0].stack->next = board[selectedSquare][0].curr;
@@ -102,8 +114,36 @@ void place_tokens(square board[NUM_ROWS][NUM_COLUMNS], player players[], int num
                 
             //updates the minimum number of tokens
             if(((numPlayers*i)+j+1)%NUM_ROWS==0)
+            {
             minNumOfTokens++;
+            }
             print_board(board);
+           
+            
+            }
+            
+                else
+                {
+                    printf("Please Select an empty square \n");
+                    printf("\nPlayer %d please select a square\n", j+1);
+                    scanf("%d", &selectedSquare);
+                    
+                    board[selectedSquare][0].curr = board[selectedSquare][0].stack;
+          
+            board[selectedSquare][0].stack = (token*)malloc(sizeof(token));
+            board[selectedSquare][0].stack->col = players[j].col;
+            board[selectedSquare][0].stack->next = board[selectedSquare][0].curr;
+            board[selectedSquare][0].numTokens++;
+            
+            //printf(" %d --> ", board[5][0].curr->col);
+                
+            //updates the minimum number of tokens
+            if(((numPlayers*i)+j+1)%NUM_ROWS==0)
+            {
+            minNumOfTokens++;
+            }
+            print_board(board);
+                }
         }
     }
 }
@@ -193,8 +233,15 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                 
             case 2:
                 printf("\nThe top token from column %d has been moved 1 space.", dice);
+                 board[dice][col+1].curr = board[row][col].stack;
+                 board[dice][col+1].stack = (token*)malloc(sizeof(token));
+                 board[dice][col+1].stack->col = players[j].col;
+                 board[dice][col+1].stack->next = board[row][col].curr;
+                 board[dice][col+1].numTokens++;
                 break;
         }
+        
+                       
         
         print_board(board);
         }
