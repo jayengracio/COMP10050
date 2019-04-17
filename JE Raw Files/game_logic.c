@@ -89,16 +89,23 @@ void place_tokens(square board[NUM_ROWS][NUM_COLUMNS], player players[], int num
             printf("\nPlayer %d please select a square\n", j+1);
             scanf("%d", &selectedSquare);
             
-            // IMPLEMENT: if the square selected by the user has the minimum number of tokens
-            // and whether it does not contain a token of the same color selected by the player 
-            board[selectedSquare][0].curr = board[selectedSquare][0].stack;
+            board[selectedSquare][0].curr = board[selectedSquare][0].stack; // Top stack = User Input 
             
-            board[selectedSquare][0].stack = (token*)malloc(sizeof(token));
-            board[selectedSquare][0].stack->col = players[j].col;
+            // IMPLEMENT: if the square selected by the user has the minimum number of tokens
+            // and whether it does not contain a token of the same color selected by the player
+            
+            /*while (board[selectedSquare][0].numTokens == minNumOfTokens)
+            {
+                printf("\nERROR\nPlayer %d please select a square\n", j+1);
+                scanf("%d", &selectedSquare);
+            }*/
+            
+            board[selectedSquare][0].stack = (token*)malloc(sizeof(token)); // The stack is equal to the size of the token
+            board[selectedSquare][0].stack->col = players[j].col; // Stack color is equal to player's col
             board[selectedSquare][0].stack->next = board[selectedSquare][0].curr;
             board[selectedSquare][0].numTokens++;
             
-            //printf(" %d --> ", board[5][0].curr->col);
+            //printf("%d %d", board[5][0].curr->col, board[5][0].stack->col);
                 
             //updates the minimum number of tokens
             if(((numPlayers*i)+j+1)%NUM_ROWS==0)
@@ -152,7 +159,7 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                     scanf("%d,%d", &row, &col);
                 }
                 
-                printf("\n1. Above or 2. Below?\n?");
+                printf("\n1. Up or 2. Down?\n?");
                 scanf("%d", &move);
                 
                 if (col < NUM_COLUMNS || col > 0)
@@ -168,6 +175,7 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                         if(board[row][col].numTokens != 0)
                         {
                             board[row][col].stack = board[row][col].stack->next;
+                            //free(board[row][col].curr);
                             board[row][col].numTokens--;
                         }
                     }
@@ -183,6 +191,7 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                         if (board[row][col].numTokens != 0)
                         {
                             board[row][col].stack = board[row][col].stack->next;
+                            //free(board[row][col].curr);
                             board[row][col].numTokens--;
                         }
                     }
