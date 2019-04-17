@@ -69,6 +69,7 @@ void printLine(){
   printf("   -------------------------------------\n");  
 }
 
+
 /*
  * Place tokens in the first column of the board
  * 
@@ -78,7 +79,6 @@ void printLine(){
  */
 void place_tokens(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPlayers){
     // the min number of tokens placed on a square in the first column of the board
-    
     int minNumOfTokens = 0;
     int selectedSquare = 0;
     
@@ -161,13 +161,6 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                     scanf("%d,%d", &row, &col);
                 }
                 
-                board[row][col].curr = board[row][col].stack;
-                if(board[row][col].curr != NULL)
-                    {
-                        board[row][col].stack = board[row][col].curr->next;
-                        free(board[row][col].curr);
-                        board[row][col].numTokens--;
-                    }
                 
                 printf("\n1. Up or 2. Down?\n?");
                 scanf("%d", &move);
@@ -178,35 +171,36 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                         board[row-1][col].stack = (token*)malloc(sizeof(token));
                         board[row-1][col].stack->col = players[j].col;
                         board[row-1][col].stack->next = board[row][col].curr;
-                        board[row-1][col].numTokens++;
                     }
                     
-                if (move == 2)
+                else if (move == 2)
                     {
                         board[row+1][col].curr = board[row][col].stack;
                         board[row+1][col].stack = (token*)malloc(sizeof(token));
                         board[row+1][col].stack->col = players[j].col;
                         board[row+1][col].stack->next = board[row][col].curr;
-                        board[row+1][col].numTokens++;
                     }
+                
+                board[row][col].curr = board[row][col].stack;
+                if(board[row][col].curr != NULL)
+                {
+                    board[row][col].stack = board[row][col].curr->next;
+                }
                 break;
                 
             case 2:
                 break;
         }
         
-        board[dice][col].curr = board[dice][col].stack;
+        board[dice][col+1].curr = board[dice][col].stack;
         board[dice][col+1].stack = (token*)malloc(sizeof(token));
-        board[dice][col+1].stack->col = board[dice][col].stack->col;
+        board[dice][col+1].stack->col = players[j].col;
         board[dice][col+1].stack->next = board[dice][col].curr;
-        board[dice][col+1].numTokens++;
         
         board[dice][col].curr = board[dice][col].stack;
-        if(board[row][col].curr != NULL)
+        if(board[dice][col].curr != NULL)
         {
             board[dice][col].stack = board[dice][col].curr->next;
-            free(board[dice][col].curr);
-            board[dice][col].numTokens--;
         }
         
         printf("\nThe top token from column %d has been moved 1 space.\n\n", dice);
