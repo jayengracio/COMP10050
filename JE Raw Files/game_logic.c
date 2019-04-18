@@ -69,7 +69,6 @@ void printLine(){
   printf("   -------------------------------------\n");  
 }
 
-
 /*
  * Place tokens in the first column of the board
  * 
@@ -82,13 +81,6 @@ void place_tokens(square board[NUM_ROWS][NUM_COLUMNS], player players[], int num
     int minNumOfTokens = 0;
     int selectedSquare = 0;
     
-    board[0][0].numTokens=0;
-    board[1][0].numTokens=0;
-    board[2][0].numTokens=0;
-    board[3][0].numTokens=0;
-    board[4][0].numTokens=0;
-    board[5][0].numTokens=0;
-    
     for(int i=0;i<4;i++)
     {
         for (int j=0;j<numPlayers;j++)
@@ -96,28 +88,39 @@ void place_tokens(square board[NUM_ROWS][NUM_COLUMNS], player players[], int num
             printf("\nPlayer %d please select a square\n? ", j+1);
             scanf("%d", &selectedSquare);
             
-            while (board[selectedSquare][0].numTokens != 0 &&
+            /* Loop: The first column must be fully filled. */
+            /*while (board[selectedSquare][0].numTokens != 0 &&
                     board[selectedSquare][0].numTokens != minNumOfTokens)
                 {
-                    printf("\nERROR! Must be an empty square.\nPlayer %d please select a square\n? ", j+1);
+                    printf("\nERROR! Must be an empty square.\nPlayer %d please select another square\n? ", j+1);
                     scanf("%d", &selectedSquare);
-                }
+                }*/
             
+            /* Loop: To not allow player to stack a token on top of his/hers. */
+            while (board[selectedSquare][0].numTokens != 0 && players[j].col == board[selectedSquare][0].stack->col)
+            {
+                printf("\nERROR! You cannot stack a token on top of yours.\nPlayer %d please select another square\n? ", j+1);
+                scanf("%d", &selectedSquare);   
+            }
+            
+            /* Token adding/stacking */
             board[selectedSquare][0].curr = board[selectedSquare][0].stack;
             board[selectedSquare][0].stack = (token*)malloc(sizeof(token));
             board[selectedSquare][0].stack->col = players[j].col;
-            board[selectedSquare][0].stack->next = board[selectedSquare][0].curr;
+            board[selectedSquare][0].stack->nextPtr = board[selectedSquare][0].curr;
+            
+            // updates the number of tokens in the selected square
             board[selectedSquare][0].numTokens++;
                 
-            //updates the minimum number of tokens
+            // updates the minimum number of tokens
             if(((numPlayers*i)+j+1)%NUM_ROWS==0)
             minNumOfTokens++;
-            
+
+            // display the updated board.
             print_board(board);
         }
     }
 }
-
 
 /*
  * Place tokens in the first column of the board
@@ -142,7 +145,8 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
     {
         for(int j=0;j<numPlayers;j++)
         {
-            dice = rand() % + 5;
+            //dice = rand() % + 5;
+            dice = 5;
         
             // indicating which player's turn it is
             printf("\n\n --- NEW TURN --- \n\n");
@@ -174,16 +178,16 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
             // token placement for up
             if(move == 1)
             {   
-                board[row-1][col].curr = board[row][col].stack;
+                board[row-1][col].curr = board[row-1][col].stack;
                 board[row-1][col].stack = (token*)malloc(sizeof(token));
-                board[row-1][col].stack->col = players[j].col;
-                board[row-1][col].stack->next = board[row][col].curr;
+                board[row-1][col].stack->col = board[row][col].stack->col;
+                board[row-1][col].stack->nextPtr = board[row-1][col].curr;
                 
                 // the top token is replaced by user input (popped out from stack)
                 board[row][col].curr = board[row][col].stack;
                 if(board[row][col].curr != NULL)
                 {
-                    board[row][col].stack = board[row][col].curr->next;
+                    board[row][col].stack = board[row][col].curr->nextPtr;
                     free(board[row][col].curr);
                 }
             }
@@ -191,20 +195,20 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
             // token placement for down
             if (move == 2)
             {
-                board[row+1][col].curr = board[row][col].stack;
+                board[row+1][col].curr = board[row+1][col].stack;
                 board[row+1][col].stack = (token*)malloc(sizeof(token));
-                board[row+1][col].stack->col = players[j].col;
-                board[row+1][col].stack->next = board[row][col].curr;
+                board[row+1][col].stack->col = board[row][col].stack->col;
+                board[row+1][col].stack->nextPtr = board[row+1][col].curr;
                 
                 // the top token is replaced by user input (popped out from stack)
                 board[row][col].curr = board[row][col].stack;
                 if(board[row][col].curr != NULL)
                 {
-                    board[row][col].stack = board[row][col].curr->next;
+                    board[row][col].stack = board[row][col].curr->nextPtr;
                     free(board[row][col].curr);
                 }
             }
-                
+            
             if (move == 3)
             {
                 printf("\nSidestep skipped\n");
@@ -212,6 +216,7 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
             
             print_board(board);
             
+            // DICE
             printf("\nPick token from row %d to move e.g. (%d,3)\n\n? ", dice, dice);
             scanf("%d,%d", &row, &col);
             
@@ -226,16 +231,17 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                 printf("\nERROR! This square is empty.\nTry again\n? ");
                 scanf("%d,%d", &row, &col);
             }
-            board[row][col+1].curr = board[row][col].stack;
+            
+            board[row][col+1].curr = board[row][col+1].stack;
             board[row][col+1].stack = (token*)malloc(sizeof(token));
             board[row][col+1].stack->col = board[row][col].stack->col;
-            board[row][col+1].stack->next = board[row][col].curr;
+            board[row][col+1].stack->nextPtr = board[row][col+1].curr;
                 
             // the top token is replaced by user input (popped out from stack)
             board[row][col].curr = board[row][col].stack;
             if(board[row][col].curr != NULL)
             {
-                board[row][col].stack = board[row][col].curr->next;
+                board[row][col].stack = board[row][col].curr->nextPtr;
                 free(board[row][col].curr);
             }
         
