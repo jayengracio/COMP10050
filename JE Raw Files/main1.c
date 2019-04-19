@@ -44,8 +44,6 @@ int main(int argc, char** argv) {
     //on the first column of the board
     place_tokens(board, players, numPlayers);
     
-    print_board(board);
-    
     //manages the turns of the game and identifies a winner
     play_game(board, players, numPlayers);
     

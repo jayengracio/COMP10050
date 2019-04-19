@@ -2,6 +2,8 @@
 #define NUM_ROWS 6
 //number of columns of the board
 #define NUM_COLUMNS 9
+// number of turns that can be made
+#define TURNS 300
 
 
 //types of squares

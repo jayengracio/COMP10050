@@ -44,24 +44,28 @@ void initialize_board(square board[NUM_ROWS][NUM_COLUMNS]){
 int initialize_players(player players[]){
     int nPlayers=0;
     
-    printf("\nHow many players? (MAX 6): ");
+    // ask for user-input on how many players will be playing this session
+    printf("\nHow many players? (MAX: 2-6)\n-> ");
     scanf("%d", &nPlayers);
     
+    // loop: if user input is below 2 or exceeds 6
     while (nPlayers < 2 || nPlayers > 6)
     {
         printf("\nERROR! Only 2 to 6 Players.\nTry Again: ");
         scanf("%d", &nPlayers);
     }
     
+    // user-input: filling out each player's information
     for(int i=0;i<nPlayers;i++)
     {
-        printf("\nEnter Player %d's Name: ", i+1);
+        printf("\nEnter Player %d's Name\n-> ", i+1);
         scanf("%s", &players[i].name);
-        players[i].numTokensLastCol = 0;
+        
         players[i].col = i;
-        //printf("%s is set as color %d\n\n", players[i].name, players[i].col);
+        players[i].numTokensLastCol = 0;
     }
     
+    // this function returns the amount of players playing
     return nPlayers;
     }
     
