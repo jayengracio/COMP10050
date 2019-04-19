@@ -50,6 +50,5 @@ int main(int argc, char** argv) {
     play_game(board, players, numPlayers);
     
     return 0;
-    
 }
 

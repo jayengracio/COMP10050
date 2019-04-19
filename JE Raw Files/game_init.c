@@ -57,6 +57,7 @@ int initialize_players(player players[]){
     {
         printf("\nEnter Player %d's Name: ", i+1);
         scanf("%s", &players[i].name);
+        players[i].numTokensLastCol = 0;
         players[i].col = i;
         //printf("%s is set as color %d\n\n", players[i].name, players[i].col);
     }

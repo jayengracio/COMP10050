@@ -137,6 +137,7 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
     int col, row;
     int dice;
     int move;
+    int x;
     
     printf("\n! THE GAME HAS COMMENCED !\n");
     
@@ -144,9 +145,9 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
     for(int i=0;i<99;i++)
     {
         for(int j=0;j<numPlayers;j++)
-        {
-            //dice = rand() % + 5;
-            dice = 5;
+        { 
+            x = 0;
+            dice = rand() % + 5;
         
             // indicating which player's turn it is
             printf("\n\n --- NEW TURN --- \n\n");
@@ -156,22 +157,29 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
             // user input: ask which piece to sidestep 
             printf("\nPick one of your piece to sidestep e.g. (8,5)\n\n? ");
             scanf("%d,%d", &row, &col);
-        
-            // if the player's color does not match the top token from user inputted (row,col)
-            while (board[row][col].stack->col != players[j].col || board[row][col].stack == NULL)
+            
+            // if the square is empty, ask for user input again.
+            while (board[row][col].stack == NULL)
             {
-                printf("\nYou do not have a piece in (%d,%d).\n\n? ", row,col);
+                printf("\nERROR! This square is empty.\n? ");
+                scanf("%d,%d", &row, &col);
+            }
+            
+            // if the player's color does not match the top token from user inputted (row,col)
+            while (board[row][col].stack->col != players[j].col)
+            {
+                printf("\nERROR! The top token in (%d,%d) is not your piece.\n? ", row,col);
                 scanf("%d,%d", &row, &col);
             }
                 
             // user input: if the token is to be moved up/down a column
-            printf("\n1 -> Move Up\n3 -> Move Down\n3 -> Skip Sidestep\n\n? ");
+            printf("\n1 -> Move Up\n2 -> Move Down\n3 -> Skip Sidestep\n\n? ");
             scanf("%d", &move);
                 
             while (move != 1 && move != 2 && move != 3)
             {
-                printf("\nERROR: Incorrect Input.");
-                printf("\n1 -> Move Up\n3 -> Move Down\n3 -> Skip Sidestep\n\n? ");
+                printf("\nERROR! Incorrect Input.");
+                printf("\n1 -> Move Up\n2 -> Move Down\n3 -> Skip Sidestep\n\n? ");
                 scanf("%d", &move);
             }
         
@@ -216,37 +224,77 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
             
             print_board(board);
             
-            // DICE
+            /* DICE */
             printf("\nPick token from row %d to move e.g. (%d,3)\n\n? ", dice, dice);
             scanf("%d,%d", &row, &col);
             
+            // in the case that an entire column doesn't contain a single token, the dice is re-rolled.
+            if (board[row][0].stack == NULL && board[row][1].stack == NULL && board[row][2].stack == NULL &&
+                board[row][3].stack == NULL && board[row][4].stack == NULL && board[row][5].stack == NULL &&
+                board[row][6].stack == NULL && board[row][7].stack == NULL && board[row][8].stack == NULL)
+            {
+                printf("\nColumn %d appears to be empty, the dice has been re-rolled.\n", col);
+                dice = rand() % + 5;
+                printf("\nPick token from row %d to move e.g. (%d,3)\n\n? ", dice, dice);
+                scanf("%d,%d", &row, &col);
+            }
+            
+            // if the user-inputted row is not equal to the value the dice lands on, as for user input again.
             while (row != dice)
             {
                 printf("\nERROR! Input piece is not from the rolled row.\nTry again\n? ");
                 scanf("%d,%d", &row, &col);
             }
             
+            // if the the user tries to move an empty square, ask for user input again.
             while (board[row][col].stack == NULL)
             {
                 printf("\nERROR! This square is empty.\nTry again\n? ");
                 scanf("%d,%d", &row, &col);
             }
             
+            // a new token is made in the next column based on the previous column.
             board[row][col+1].curr = board[row][col+1].stack;
             board[row][col+1].stack = (token*)malloc(sizeof(token));
             board[row][col+1].stack->col = board[row][col].stack->col;
             board[row][col+1].stack->nextPtr = board[row][col+1].curr;
-                
-            // the top token is replaced by user input (popped out from stack)
+            board[row][col+1].numTokens++;
+            
+            // the top token is removed and replaced by the token that was below it.
             board[row][col].curr = board[row][col].stack;
             if(board[row][col].curr != NULL)
             {
                 board[row][col].stack = board[row][col].curr->nextPtr;
                 free(board[row][col].curr);
             }
-        
-            // display the board with the new updates
+            
+            if (board[row][8].stack != NULL)
+            {
+                //printf("\n\nTEST\n\n");
+                //printf("\nCOLOR %d", board[row][8].stack->col);
+                while (j < numPlayers)
+                {    
+                    if (players[j].col == board[row][8].stack->col)
+                    {
+                        printf("\nCOL++ %s", players[j].name);
+                        players[j].numTokensLastCol++;
+                        break;
+                    }
+                    
+                    else
+                        j++;
+                }
+                
+                if (players[j].numTokensLastCol == 3)
+                {
+                    printf("\n\nGAME OVER: %s WINS! \n\n", players[j].name);
+                    exit(0);
+                }
+            }
+            
             print_board(board);
+            // display the board with the new updates
+            
         }
     }
 }
