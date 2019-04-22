@@ -133,26 +133,33 @@ void place_tokens(square board[NUM_ROWS][NUM_COLUMNS], player players[], int num
  */
 
 void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPlayers){
+    
+    // setting up of variables
     srand(time(0));
     int col, row;
     int dice;
     int move;
     int x = 0;
-    
     int bfield, bfield2, bfield3, bfield4, bfield5, bfield6;
     
+    
+    // the game begins
     printf("\n! THE GAME HAS COMMENCED !\n");
+    
     
     for(int i=0;i<TURNS;i++)
     {
         for(int j=0;j<numPlayers;j++)
         { 
+            // each run, the value of the dice is randomized between 0 and 5.
             dice = rand() % 6;
             
+            
+            // print to display to users that an obstacle square is active.
             if (board[0][3].stack > 0)
             {
                 printf("\nObstacle (0,3) is active.\n");
-                bfield = 1;
+                bfield = 1; // bfield is set to 0 to indicate that this specific square is active.
             }
             
             if (board[1][6].stack > 0)
@@ -184,14 +191,20 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                 printf("\nObstacle (5,7) is active.\n");
                 bfield6 = 1;
             }
+            // displaying of active obstacle ends here
             
-            /* DICE ROLLS AUTOMATIC (makes thing easier) */
+            
+            
+            
+            
+            /* 1. THE DICE (the dice is rolled automatically each there is a new turn)*/
             printf("\n\n --- ( NEW TURN )  --- \n\n");
             printf("It is %s's turn.\n", players[j].name);
             printf("\n%s rolls the dice: %d\n", players[j].name, dice);
             
             
-            /* SIDESTEP */
+            
+            /*2. THE SIDESTEP (a player chooses a token of his/hers and can choose to sidestep it or not)*/
             printf("\nSelect one of your tokens e.g. (8,5)\n-> ");
             scanf("%d,%d", &row, &col);
             
@@ -204,7 +217,7 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
             }
 
             
-            // if the player's color does not match the top token from user inputted (row,col)
+            // if the player's color does not match the top token from user inputted (row,col), ask for user input again
             while (board[row][col].stack->col != players[j].col)
             {
                 printf("\nERROR! The top token in (%d,%d) is not your piece.\n-> ", row,col);
@@ -212,7 +225,7 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
             }
             
             
-            // if player tries to pick a square that is currently set as an "OBSTACLE", loop for a different user-input.
+            // if player tries to pick a specific square that is currently set as an "OBSTACLE", ask for user input again
             while (row == 0 && col == 3 && bfield == 1)
             {
                 printf("\nOBSTACLE! This square 0,3 is currently locked\nIf there are no tokens in available input 9,9 to end-turn.\n-> ");
@@ -266,7 +279,7 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                 if (row == 9 && col == 9)
                 break;
             }
-            
+            // end of specific obstacle square user-input.
             
             
             
@@ -286,13 +299,16 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
             // creates a new token for the upper row
             if(move == 1)
             {
+                // if the user-inputted row is not between the values of 0 to 5 (the row size of the game table)
                 if(row-1 < 1)
                 {
                     printf("\nMove incomplete, inputted row goes beyond the table size of 0 to 5\n\n");
                 }
                 
+                // if the user-input meets the right requirements
                 else
                 {
+                    // using linked lists
                     board[row-1][col].curr = board[row-1][col].stack;
                     board[row-1][col].stack = (token*)malloc(sizeof(token));
                     board[row-1][col].stack->col = board[row][col].stack->col;
@@ -347,11 +363,11 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
             
             
             
-            /* THE DICE LANDS & A TOKEN MOVES */
+            /*3. TOKEN MOVEMENT (a token based on the number row that the dice lands on moves 1 column to the right)*/
             printf("\nPick token from row %d to move e.g. (%d,3)\nIf there are no tokens from this row to move, input 9,9 to end-turn.\n-> ", dice, dice);
             scanf("%d,%d", &row, &col);       
             
-            // ends player J's move
+            // in case of emergency, end player J's move.
             if (row == 9 && col == 9)
             break;    
             
@@ -359,9 +375,10 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
             
             
             
-            // OBSTACLE: if the requirements are met for an obstacle square, their type is set to normal and tokens in that square can now move.
+            // OBSTACLE: when a player tries to move a token from an active obstacle square
             if (bfield == 1)
             {
+                // if the requirements are met for an obstacle square to deactivate, their type is set to normal and tokens in that square can now move forward.
                 if (board[0][0].stack == NULL && board[0][1].stack == NULL && board[0][2].stack == NULL &&
                         board[1][0].stack == NULL && board[1][1].stack == NULL && board[1][2].stack == NULL &&
                         board[2][0].stack == NULL && board[2][1].stack == NULL && board[2][2].stack == NULL &&
@@ -370,8 +387,8 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                         board[5][0].stack == NULL && board[5][1].stack == NULL && board[5][2].stack == NULL)
                 {
                     printf("\nObstacle (0,3) has been deactivated\n-> ");
-                    board[0][3].type = NORMAL;
-                    bfield = 0;
+                    board[0][3].type = NORMAL; // sets the board type from OBSTACLE to NORMAL
+                    bfield = 0; // sets the obstacle indicator to 0 which will render some loops useless.
                 }
                 
                 while (row == 0 && col == 3 && bfield == 1)
