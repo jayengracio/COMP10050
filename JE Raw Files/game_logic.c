@@ -133,7 +133,7 @@ void place_tokens(square board[NUM_ROWS][NUM_COLUMNS], player players[], int num
  */
 
 void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPlayers){
-    srand(time(NULL));
+    srand(time(0));
     int col, row;
     int dice;
     int move;
@@ -147,41 +147,41 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
     {
         for(int j=0;j<numPlayers;j++)
         { 
-            dice = rand() % + 5;
+            dice = rand() % 6;
             
             if (board[0][3].stack > 0)
             {
-                printf("\nObstacle (0,3) has been activated.\n");
+                printf("\nObstacle (0,3) is active.\n");
                 bfield = 1;
             }
             
             if (board[1][6].stack > 0)
             {
-                printf("\nObstacle (1,6) has been activated.\n");
+                printf("\nObstacle (1,6) is active.\n");
                 bfield2 = 1;
             }
             
             if (board[2][4].stack > 0)
             {
-                printf("\nObstacle (2,4) has been activated.\n");
+                printf("\nObstacle (2,4) is active.\n");
                 bfield3 = 1;
             }
             
             if (board[3][5].stack > 0)
             {
-                printf("\nObstacle (3,5) has been activated.\n");
+                printf("\nObstacle (3,5) is active.\n");
                 bfield4 = 1;
             }
             
             if (board[4][2].stack > 0)
             {
-                printf("\nObstacle (4,2) has been activated.\n");
+                printf("\nObstacle (4,2) is active.\n");
                 bfield5 = 1;
             }
             
             if (board[5][7].stack > 0)
             {
-                printf("\nObstacle (5,7) has been activated.\n");
+                printf("\nObstacle (5,7) is active.\n");
                 bfield6 = 1;
             }
             
@@ -195,12 +195,14 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
             printf("\nSelect one of your tokens e.g. (8,5)\n-> ");
             scanf("%d,%d", &row, &col);
             
+            
             // if the square is empty, ask for user input again.
             while (board[row][col].stack == NULL)
             {
-                printf("\nERROR! This square is empty.\n-> ");
+                printf("\nERROR! This square is empty.\nIf there are no tokens in available input 9,9 to end-turn.\n-> ");
                 scanf("%d,%d", &row, &col);
             }
+
             
             // if the player's color does not match the top token from user inputted (row,col)
             while (board[row][col].stack->col != players[j].col)
@@ -208,6 +210,66 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                 printf("\nERROR! The top token in (%d,%d) is not your piece.\n-> ", row,col);
                 scanf("%d,%d", &row, &col);
             }
+            
+            
+            // if player tries to pick a square that is currently set as an "OBSTACLE", loop for a different user-input.
+            while (row == 0 && col == 3 && bfield == 1)
+            {
+                printf("\nOBSTACLE! This square 0,3 is currently locked\nIf there are no tokens in available input 9,9 to end-turn.\n-> ");
+                scanf("%d,%d", &row, &col);
+                
+                if (row == 9 && col == 9)
+                break;
+            }
+            
+            while (row == 1 && col == 6 && bfield2 == 1)
+            {
+                printf("\nOBSTACLE! This square 1,6 is currently locked\nIf there are no tokens in available input 9,9 to end-turn.\n-> ");
+                scanf("%d,%d", &row, &col);
+                
+                if (row == 9 && col == 9)
+                break;
+            }
+            
+            while (row == 2 && col == 4 && bfield3 == 1)
+            {
+                printf("\nOBSTACLE! This square 2,4 is currently locked\nIf there are no tokens in available input 9,9 to end-turn.e\n-> ");
+                scanf("%d,%d", &row, &col);
+                
+                if (row == 9 && col == 9)
+                break;
+            }
+            
+            while (row == 3 && col == 5 && bfield4 == 1)
+            {
+                printf("\nOBSTACLE! This square 3,5 is currently locked\nIf there are no tokens in available input 9,9 to end-turn.\n-> ");
+                scanf("%d,%d", &row, &col);
+                
+                if (row == 9 && col == 9)
+                break;
+            }
+            
+            while (row == 4 && col == 2 && bfield5 == 1)
+            {
+                printf("\nOBSTACLE! This square 4,2 is currently locked\nIf there are no tokens in available input 9,9 to end-turn.\n-> ");
+                scanf("%d,%d", &row, &col);
+                
+                if (row == 9 && col == 9)
+                break;
+            }
+            
+            while (row == 5 && col == 7 && bfield6 == 1)
+            {
+                printf("\nOBSTACLE! This square 5,7 is currently locked\nIf there are no tokens in available input 9,9 to end-turn.\n-> ");
+                scanf("%d,%d", &row, &col);
+                
+                if (row == 9 && col == 9)
+                break;
+            }
+            
+            
+            
+            
             
             // user-input: if user wants to sidepiece his/her piece up or down or not at all
             printf("\n1 -> Move Up\n2 -> Move Down\n3 -> Skip Sidestep\n\n-> ");
@@ -223,7 +285,14 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
             
             // creates a new token for the upper row
             if(move == 1)
-            {   
+            {
+                if(row-1 < 1)
+                {
+                    printf("\nMove incomplete, inputted row goes beyond the table size of 0 to 5\n\n");
+                }
+                
+                else
+                {
                     board[row-1][col].curr = board[row-1][col].stack;
                     board[row-1][col].stack = (token*)malloc(sizeof(token));
                     board[row-1][col].stack->col = board[row][col].stack->col;
@@ -236,11 +305,19 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                         board[row][col].stack = board[row][col].curr->nextPtr;
                         free(board[row][col].curr);
                     }
+                }
             }
         
             // creates a new token for the lower row
             if (move == 2)
             {
+                if (row+1 > NUM_ROWS)
+                {
+                    printf("\nMove incomplete, inputted row goes beyond the table size of 0 to 8\n\n");
+                }
+                
+                else
+                {
                     board[row+1][col].curr = board[row+1][col].stack;
                     board[row+1][col].stack = (token*)malloc(sizeof(token));
                     board[row+1][col].stack->col = board[row][col].stack->col;
@@ -253,6 +330,7 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                         board[row][col].stack = board[row][col].curr->nextPtr;
                         free(board[row][col].curr);
                     }
+                }
             }
             
             // if the user does not wish to move his piece
@@ -264,23 +342,24 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
             // display the game table with current updates.
             print_board(board);
             
+            
+            
+            
+            
+            
             /* THE DICE LANDS & A TOKEN MOVES */
-            printf("\nPick token from row %d to move e.g. (%d,3)\n\n? ", dice, dice);
-            scanf("%d,%d", &row, &col);
+            printf("\nPick token from row %d to move e.g. (%d,3)\nIf there are no tokens from this row to move, input 9,9 to end-turn.\n-> ", dice, dice);
+            scanf("%d,%d", &row, &col);       
             
-            // in the case that an entire column doesn't contain a single token, the dice is re-rolled (for safety measures).
-            /*if (board[row][0].stack == NULL && board[row][1].stack == NULL && board[row][2].stack == NULL &&
-                board[row][3].stack == NULL && board[row][4].stack == NULL && board[row][5].stack == NULL &&
-                board[row][6].stack == NULL && board[row][7].stack == NULL && board[row][8].stack == NULL)
-            {
-                printf("\nColumn %d appears to be empty, the dice has been re-rolled.\n", col);
-                dice = rand() % + 5;
-                printf("\nPick token from row %d to move e.g. (%d,3)\n\n-> ", dice, dice);
-                scanf("%d,%d", &row, &col);
-            }*/
+            // ends player J's move
+            if (row == 9 && col == 9)
+            break;    
             
             
             
+            
+            
+            // OBSTACLE: if the requirements are met for an obstacle square, their type is set to normal and tokens in that square can now move.
             if (bfield == 1)
             {
                 if (board[0][0].stack == NULL && board[0][1].stack == NULL && board[0][2].stack == NULL &&
@@ -297,26 +376,37 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                 
                 while (row == 0 && col == 3 && bfield == 1)
                 {
-                    printf("\nOBSTACLE ACTIVE: You cannot move this token until column 0 and 1 are empty.\n-> ");
+                    printf("\nOBSTACLE ACTIVE: You cannot move this token until all squares prior to this column are empty."
+                            "\nIf there are no other tokens outside of the obstacle, input 0,9 to end turn.\n-> ");
+                    
                     scanf("%d,%d", &row, &col);
+                    
+                    if (row == 0 && col == 9)
+                        break;
                     
                     // if the user-inputted row is not equal to the value the dice lands on, as for user input again.
                     while (row != dice)
                     {
                         printf("\nERROR! Input piece is not from the rolled row.\nTry again\n-> ");
                         scanf("%d,%d", &row, &col);
+                        
+                        if (row == 0 && col == 9)
+                        break;
                     }
             
                     // if the the user tries to move an empty square, ask for user input again.
                     while (board[row][col].stack == NULL)
                     {
-                    printf("\nERROR! This square is empty.\nTry again\n-> ");
-                    scanf("%d,%d", &row, &col);
+                        printf("\nERROR! This square is empty.\nTry again\n-> ");
+                        scanf("%d,%d", &row, &col);
+                    
+                        if (row == 0 && col == 9)
+                        break;
                     }
                 }
             }
             
-            
+            // obstacle in (1,6)
             if (bfield2 == 1)
             {
                 if (board[0][0].stack == NULL && board[0][1].stack == NULL && board[0][2].stack == NULL && board[0][3].stack == NULL && board[0][4].stack == NULL && board[0][5].stack == NULL &&
@@ -333,27 +423,39 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                 
                 while (row == 1 && col == 6 && bfield2 == 1)
                 {
-                    printf("\nOBSTACLE ACTIVE: You cannot move this token until column 0 and 1 are empty.\n-> ");
+                    printf("\nOBSTACLE ACTIVE: You cannot move this token until all squares prior to this column are empty."
+                            "\nIf there are no other tokens outside of the obstacle, input 1,9 to end turn.\n-> ");
+                    
                     scanf("%d,%d", &row, &col);
+                    
+                    if (row == 1 && col == 9)
+                        break;
                     
                     // if the user-inputted row is not equal to the value the dice lands on, as for user input again.
                     while (row != dice)
                     {
                         printf("\nERROR! Input piece is not from the rolled row.\nTry again\n-> ");
                         scanf("%d,%d", &row, &col);
+                        
+                        if (row == 1 && col == 9)
+                        break;
                     }
             
                     // if the the user tries to move an empty square, ask for user input again.
                     while (board[row][col].stack == NULL)
                     {
-                    printf("\nERROR! This square is empty.\nTry again\n-> ");
-                    scanf("%d,%d", &row, &col);
+                        printf("\nERROR! This square is empty.\nTry again\n-> ");
+                        scanf("%d,%d", &row, &col);
+                    
+                        if (row == 1 && col == 9)
+                        break;
                     }
                 }
             }
             
             
             
+            // obstacle in (2,4)
             if (bfield3 == 1)
             {
                 if (board[0][0].stack == NULL && board[0][1].stack == NULL && board[0][2].stack == NULL && board[0][3].stack == NULL &&
@@ -370,26 +472,39 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                 
                 while (row == 2 && col == 4 && bfield3 == 1)
                 {
-                    printf("\nOBSTACLE ACTIVE: You cannot move this token until column 0 and 1 are empty.\n-> ");
+                    printf("\nOBSTACLE ACTIVE: You cannot move this token until all squares prior to this column are empty."
+                            "\nIf there are no other tokens outside of the obstacle, input 2,9 to end turn.\n-> ");
+                    
                     scanf("%d,%d", &row, &col);
+                    
+                    if (row == 2 && col == 9)
+                        break;
                     
                     // if the user-inputted row is not equal to the value the dice lands on, as for user input again.
                     while (row != dice)
                     {
                         printf("\nERROR! Input piece is not from the rolled row.\nTry again\n-> ");
                         scanf("%d,%d", &row, &col);
+                        
+                        if (row == 2 && col == 9)
+                        break;
                     }
             
                     // if the the user tries to move an empty square, ask for user input again.
                     while (board[row][col].stack == NULL)
                     {
-                    printf("\nERROR! This square is empty.\nTry again\n-> ");
-                    scanf("%d,%d", &row, &col);
+                        printf("\nERROR! This square is empty.\nTry again\n-> ");
+                        scanf("%d,%d", &row, &col);
+                    
+                        if (row == 2 && col == 9)
+                        break;
                     }
                 }
             }
             
             
+            
+            // obstacle in (3,5)
             if (bfield4 == 1)
             {
                 if (board[0][0].stack == NULL && board[0][1].stack == NULL && board[0][2].stack == NULL && board[0][3].stack == NULL && board[0][4].stack == NULL &&
@@ -406,25 +521,38 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                 
                 while (row == 3 && col == 5 && bfield4 == 1)
                 {
-                    printf("\nOBSTACLE ACTIVE: You cannot move this token until column 0 and 1 are empty.\n-> ");
+                    printf("\nOBSTACLE ACTIVE: You cannot move this token until all squares prior to this column are empty."
+                            "\nIf there are no other tokens outside of the obstacle, input 3,9 to end turn.\n-> ");
+                    
                     scanf("%d,%d", &row, &col);
+                    
+                    if (row == 3 && col == 9)
+                        break;
                     
                     // if the user-inputted row is not equal to the value the dice lands on, as for user input again.
                     while (row != dice)
                     {
                         printf("\nERROR! Input piece is not from the rolled row.\nTry again\n-> ");
                         scanf("%d,%d", &row, &col);
+                        
+                        if (row == 3 && col == 9)
+                        break;
                     }
             
                     // if the the user tries to move an empty square, ask for user input again.
                     while (board[row][col].stack == NULL)
                     {
-                    printf("\nERROR! This square is empty.\nTry again\n-> ");
-                    scanf("%d,%d", &row, &col);
+                        printf("\nERROR! This square is empty.\nTry again\n-> ");
+                        scanf("%d,%d", &row, &col);
+                    
+                        if (row == 3 && col == 9)
+                        break;
                     }
                 }
             }
             
+            
+            // obstacle in (4,2)
             if (bfield5 == 1)
             {
                 if (board[0][0].stack == NULL && board[0][1].stack == NULL &&
@@ -441,25 +569,39 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                 
                 while (row == 4 && col == 2 && bfield5 == 1)
                 {
-                    printf("\nOBSTACLE ACTIVE: You cannot move this token until column 0 and 1 are empty.\n-> ");
+                    printf("\nOBSTACLE ACTIVE: You cannot move this token until all squares prior to this column are empty."
+                            "\nIf there are no other tokens outside of the obstacle, input 4,9 to end turn.\n-> ");
+                    
                     scanf("%d,%d", &row, &col);
+                    
+                    if (row == 4 && col == 9)
+                        break;
                     
                     // if the user-inputted row is not equal to the value the dice lands on, as for user input again.
                     while (row != dice)
                     {
                         printf("\nERROR! Input piece is not from the rolled row.\nTry again\n-> ");
                         scanf("%d,%d", &row, &col);
+                        
+                        if (row == 4 && col == 9)
+                        break;
                     }
             
                     // if the the user tries to move an empty square, ask for user input again.
                     while (board[row][col].stack == NULL)
                     {
-                    printf("\nERROR! This square is empty.\nTry again\n-> ");
-                    scanf("%d,%d", &row, &col);
+                        printf("\nERROR! This square is empty.\nTry again\n-> ");
+                        scanf("%d,%d", &row, &col);
+                        
+                        if (row == 4 && col == 9)
+                        break;
                     }
                 }
             }
             
+            
+            
+            // obstacle in (5,7)
             if (bfield6 == 1)
             {
                 if (board[0][0].stack == NULL && board[0][1].stack == NULL && board[0][2].stack == NULL && board[0][3].stack == NULL && board[0][4].stack == NULL && board[0][5].stack == NULL && board[0][6].stack == NULL &&
@@ -476,34 +618,35 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
                 
                 while (row == 5 && col == 7 && bfield6 == 1)
                 {
-                    printf("\nOBSTACLE ACTIVE: You cannot move this token until column 0 and 1 are empty.\n-> ");
+                    printf("\nOBSTACLE ACTIVE: You cannot move this token until all squares prior to this column are empty."
+                            "\nIf there are no other tokens outside of the obstacle, input 5,9 to end turn.\n-> ");
+                    
                     scanf("%d,%d", &row, &col);
+                    
+                    if (row == 5 && col == 9)
+                        break;
                     
                     // if the user-inputted row is not equal to the value the dice lands on, as for user input again.
                     while (row != dice)
                     {
                         printf("\nERROR! Input piece is not from the rolled row.\nTry again\n-> ");
                         scanf("%d,%d", &row, &col);
+                        
+                        if (row == 5 && col == 9)
+                        break;
                     }
             
                     // if the the user tries to move an empty square, ask for user input again.
                     while (board[row][col].stack == NULL)
                     {
-                    printf("\nERROR! This square is empty.\nTry again\n-> ");
-                    scanf("%d,%d", &row, &col);
+                        printf("\nERROR! This square is empty.\nTry again\n-> ");
+                        scanf("%d,%d", &row, &col);
+                    
+                        if (row == 5 && col == 9)
+                        break;
                     }
                 }
-            }
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
+            }           
             
             
             
@@ -515,6 +658,9 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
             {
                 printf("\nERROR! Input piece is not from the rolled row.\nTry again\n-> ");
                 scanf("%d,%d", &row, &col);
+                
+                if (row == 9 && col == 9)
+                break;
             }
             
             // if the the user tries to move an empty square, ask for user input again.
@@ -522,17 +668,20 @@ void play_game(square board[NUM_ROWS][NUM_COLUMNS], player players[], int numPla
             {
                 printf("\nERROR! This square is empty.\nTry again\n-> ");
                 scanf("%d,%d", &row, &col);
+                
+                if (row == 9 && col == 9)
+                break;
             }
             
             
             
-            // a new token is made in the next column based on the previous column.
+            // a 'new' token is made in the next column based on the token behind it.
             board[row][col+1].curr = board[row][col+1].stack;
             board[row][col+1].stack = (token*)malloc(sizeof(token));
             board[row][col+1].stack->col = board[row][col].stack->col;
             board[row][col+1].stack->nextPtr = board[row][col+1].curr;
             
-            // the top token is removed and replaced by the token that was below it.
+            // the top token is removed and replaced by the previous token before it in the old column.
             board[row][col].curr = board[row][col].stack;
             if(board[row][col].curr != NULL)
             {

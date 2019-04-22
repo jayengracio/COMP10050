@@ -55,6 +55,8 @@ int initialize_players(player players[]){
         scanf("%d", &nPlayers);
     }
     
+    printf("\n  NOTE: Player color is based on first-input\n        e.g. P1 = Red, P2 = Blue, P3 = Green etc..\n");
+    
     // user-input: filling out each player's information
     for(int i=0;i<nPlayers;i++)
     {
