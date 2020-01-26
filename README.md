@@ -2,4 +2,6 @@
 Software Engineering: Assignment 2
 
 Students:
-John Joseph Engracio & Jurdy Rave Hermita
+John Engracio & Jurdy Hermita
+
+Final Grade: A-
