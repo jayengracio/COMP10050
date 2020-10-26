@@ -1,7 +1,4 @@
-# COMP10050
-Software Engineering: Assignment 2
+1st Year Software Engineering Project
 
-Students:
+Team:
 John Engracio & Jurdy Hermita
-
-Final Grade: A-
